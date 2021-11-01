@@ -9,17 +9,17 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 source("wrangling_code.R")
-source("visualization_function.R")
+source("Comments on visualization function.R")
 ```
 
 
 ```{r}
-plot2(tidy,Canada)
+plot(tidy,"Canada")
 ```
 
 
 ```{r}
-plot3(tidy,Japan)
+plot(tidy,"Japan")
 ```
 
 Observation:
