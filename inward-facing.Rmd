@@ -1,0 +1,87 @@
+---
+title: "inward-facing"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Overview: 
+
+In the first chunk sourced "wrangling_code.R", I combine the two tables, representing the male and female employment rates of each country, into a tibble using inner_join(), and transform the horizontal data into vertical data through pivot_longer()
+
+In the second chunk, I set the function plot2()and plot3() to extract data of Japan and Canada from dataset and then draw the data of the two countries separately.
+```{r}
+source("wrangling_code.R",echo=TRUE)
+library(tidyverse)
+#install.packages('tibble')
+library(tibble)
+library(dplyr)     #Import the required packages
+setwd("C:/Users/liyuyang/Desktop/BU/2021fall/615/assign2")    #Set the path of data
+
+female<-as_tibble(read.csv("females_aged_15_24_employment_rate_percent.csv"))
+male<- as_tibble(read.csv("males_aged_15_24_employment_rate_percent.csv"))    #Read data
+colnames(male)[1]<-"country"
+colnames(female)[1]<-"country"     #Change the name of first column
+connect<- inner_join(male,female,by="country")   #Connect two data sets into one table
+tidy<-connect %>% 
+  pivot_longer(!country, names_to ="year", values_to ="employment_rate")
+tidy$year<-gsub("X","",tidy$year)   #Change horizontal data to vertical data, 
+                                    #and put the same country together
+
+```
+
+
+```{r}
+source("visualization_function.R",echo=TRUE)
+plot2<- function(data,Canada){        #Set the function
+  data<-data
+  countryname<-"Canada"              #Select Canada to plot
+  dataset<-filter(data,data$country==countryname)   #Select Canada from dataset
+  dataset$year<-gsub(".x","",dataset$year)
+  dataset$year<-gsub(".y","",dataset$year)     #Change the value of "year" 
+                                              #column to numberic
+  n<-as.numeric(nrow(dataset))   #Get the row number of dataset
+  dataset1<-dataset[1:(n/2),]    #From row 1 to row n/2 is the data of males
+  dataset2<-dataset[(n/2+1):n,]  #From row n/2+1 to row n is the data of females
+  p<-ggplot(data=dataset,aes(x=year,y=employment_rate))+   #The x axis is year 
+                                                  #the y axis is employment rate
+    geom_point(data=dataset1,aes(x=year,y=employment_rate),pch=1,size=1)+ #Add points of males
+                                                              
+    geom_line(data=dataset1,group=1,col="blue")+  #Add line of males and color is blue
+    geom_point(data=dataset2,aes(x=year,y=employment_rate))+ #Add points of females
+    geom_line(data=dataset2,group=1,col="green",pch=16,size=1)+ #Add line of females
+                                                                #and color is green
+    scale_x_discrete(breaks=seq(1990,2021,5))+    #Adjust the x coordinate spacing
+    ggtitle("Employment of Canada") +   #Add title
+    theme(plot.title = element_text(hjust = 0.5))
+  p
+  return(p)
+}
+plot2(tidy,Canada)
+#plot3() is almost same as plot2()
+#the only difference is the selected country is Japan rather Canada
+plot3<- function(data,Japan){
+  data<-data
+  countryname<-"Japan"
+  dataset<-filter(data,data$country==countryname)
+  dataset$year<-gsub(".x","",dataset$year)
+  dataset$year<-gsub(".y","",dataset$year)
+  n<-as.numeric(nrow(dataset))
+  dataset1<-dataset[1:(n/2),]
+  dataset2<-dataset[(n/2+1):n,]
+  p<-ggplot(data=dataset,aes(x=year,y=employment_rate))+
+    geom_point(data=dataset1,aes(x=year,y=employment_rate),pch=1,size=1)+
+    geom_line(data=dataset1,group=1,col="blue")+  #male
+    geom_point(data=dataset2,aes(x=year,y=employment_rate))+
+    geom_line(data=dataset2,group=1,col="green",pch=16,size=1)+ #female
+    scale_x_discrete(breaks=seq(1990,2021,5))+
+    ggtitle("Employment of Japan") +
+    theme(plot.title = element_text(hjust = 0.5))
+  p
+  return(p)
+}
+plot3(tidy,Japan)
+```
+

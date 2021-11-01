@@ -1,0 +1,33 @@
+---
+title: "outward-facing"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+source("wrangling_code.R")
+source("visualization_function.R")
+```
+
+
+```{r}
+plot2(tidy,Canada)
+```
+
+
+```{r}
+plot3(tidy,Japan)
+```
+
+Observation:
+
+In this document I separate the data into two subsets by two different countries. The first country I chose is Japan and the second one is Canada, displaying the employment rate of males and females of both countries, besides, the green line represents females and blue represents males always.
+
+1.Take a look at two figures, I found that they have the same tendency, such as the employment rate of females was lower than males before twentieth century, however, it became higher than males gradually, probably because there were more jobs for women after 2000. 
+
+2.Also, employment rate of both countries decreased remarkable in 2008, I guess it’s caused by the global financial crisis in 2008. 
+
+3.What’s more, there are something different between two subsets. Employment rate of Canada peaked in 2005 and Japan peaked in 1995, which means that Japan developed earlier than Canada but in recent year speed of development slower than Canada.
